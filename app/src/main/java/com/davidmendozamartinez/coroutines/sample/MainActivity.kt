@@ -4,47 +4,28 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        viewModel = ViewModelProvider(this).get()
+
+        viewModel.loginResult.observe(this, Observer { success ->
+            toast(if (success) "Success" else "Failure")
+        })
+
         submit.setOnClickListener {
-            lifecycleScope.launch {
-                val success1 = async(Dispatchers.IO) {
-                    validateLogin1(
-                        username.text.toString(),
-                        password.text.toString()
-                    )
-                }
-
-                val success2 = async(Dispatchers.IO) {
-                    validateLogin2(
-                        username.text.toString(),
-                        password.text.toString()
-                    )
-                }
-
-                toast(if (success1.await() && success2.await()) "Success" else "Failure")
-            }
+            viewModel.onSubmitClicked(username.text.toString(), password.text.toString())
         }
-    }
-
-    private fun validateLogin1(username: String, password: String): Boolean {
-        Thread.sleep(2000)
-        return username.isNotEmpty() && password.isNotEmpty()
-    }
-
-    private fun validateLogin2(username: String, password: String): Boolean {
-        Thread.sleep(3000)
-        return username.isNotEmpty() && password.isNotEmpty()
     }
 }
 
