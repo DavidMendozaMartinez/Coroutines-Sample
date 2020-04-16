@@ -4,25 +4,20 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity(), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    private lateinit var job: Job
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        job = SupervisorJob()
-
         submit.setOnClickListener {
-            launch {
+            lifecycleScope.launch {
                 val success = withContext(Dispatchers.IO) {
                     validateLogin(
                         username.text.toString(),
@@ -37,11 +32,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun validateLogin(username: String, password: String): Boolean {
         Thread.sleep(2000)
         return username.isNotEmpty() && password.isNotEmpty()
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 }
 
