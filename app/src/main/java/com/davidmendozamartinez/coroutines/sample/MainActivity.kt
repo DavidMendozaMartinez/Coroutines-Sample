@@ -19,12 +19,11 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get()
 
-        viewModel.loginResult.observe(this, Observer { success ->
-            toast(if (success) "Success" else "Failure")
-        })
-
         submit.setOnClickListener {
             viewModel.onSubmitClicked(username.text.toString(), password.text.toString())
+                .observe(this, Observer { success ->
+                    toast(if (success) "Success" else "Failure")
+                })
         }
     }
 }

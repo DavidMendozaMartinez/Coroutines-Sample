@@ -30,27 +30,21 @@ class MainViewModelTest {
     fun `success if username and password are not empty`() =
         coroutinesTestRule.testDispatcher.runBlockingTest {
             val observer = mock<Observer<Boolean>>()
-            viewModel.loginResult.observeForever(observer)
-            viewModel.onSubmitClicked("username", "password")
-
+            viewModel.onSubmitClicked("username", "password").observeForever(observer)
             verify(observer).onChanged(true)
         }
 
     @Test
     fun `error if username is empty`() = coroutinesTestRule.testDispatcher.runBlockingTest {
         val observer = mock<Observer<Boolean>>()
-        viewModel.loginResult.observeForever(observer)
-        viewModel.onSubmitClicked("", "password")
-
+        viewModel.onSubmitClicked("", "password").observeForever(observer)
         verify(observer).onChanged(false)
     }
 
     @Test
     fun `error if password is empty`() = coroutinesTestRule.testDispatcher.runBlockingTest {
         val observer = mock<Observer<Boolean>>()
-        viewModel.loginResult.observeForever(observer)
-        viewModel.onSubmitClicked("username", "")
-
+        viewModel.onSubmitClicked("username", "").observeForever(observer)
         verify(observer).onChanged(false)
     }
 
@@ -58,9 +52,7 @@ class MainViewModelTest {
     fun `error if username and password are empty`() =
         coroutinesTestRule.testDispatcher.runBlockingTest {
             val observer = mock<Observer<Boolean>>()
-            viewModel.loginResult.observeForever(observer)
-            viewModel.onSubmitClicked("", "")
-
+            viewModel.onSubmitClicked("", "").observeForever(observer)
             verify(observer).onChanged(false)
         }
 }
